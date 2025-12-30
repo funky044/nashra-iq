@@ -1,0 +1,17 @@
+{
+  "env": {
+    "NEXT_PUBLIC_APP_NAME": "NashraIQ",
+    "ENABLE_DEMO_MODE": "true"
+  },
+  "crons": [
+    {
+      "path": "/api/cron/refresh",
+      "schedule": "*/30 * * * *"
+    }
+  ],
+  "functions": {
+    "app/api/cron/refresh/route.ts": {
+      "maxDuration": 300
+    }
+  }
+}

@@ -1,0 +1,199 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-inter: 'Inter', system-ui, sans-serif;
+  --font-arabic: 'Cairo', system-ui, sans-serif;
+  --font-mono: 'Courier New', monospace;
+}
+
+@layer base {
+  body {
+    @apply bg-neutral-50 text-neutral-900;
+  }
+  
+  [dir="rtl"] body {
+    font-family: var(--font-arabic);
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold;
+  }
+  
+  h1 {
+    @apply text-3xl lg:text-4xl;
+  }
+  
+  h2 {
+    @apply text-2xl lg:text-3xl;
+  }
+  
+  h3 {
+    @apply text-xl lg:text-2xl;
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-white rounded-lg shadow-sm border border-neutral-200 p-4;
+  }
+  
+  .card-hover {
+    @apply card transition-all hover:shadow-md hover:border-primary-300;
+  }
+  
+  .btn {
+    @apply px-4 py-2 rounded-lg font-medium transition-all focus:outline-none focus:ring-2 focus:ring-offset-2;
+  }
+  
+  .btn-primary {
+    @apply btn bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500;
+  }
+  
+  .btn-secondary {
+    @apply btn bg-neutral-200 text-neutral-900 hover:bg-neutral-300 focus:ring-neutral-500;
+  }
+  
+  .btn-success {
+    @apply btn bg-success-500 text-white hover:bg-success-600 focus:ring-success-500;
+  }
+  
+  .btn-danger {
+    @apply btn bg-danger-500 text-white hover:bg-danger-600 focus:ring-danger-500;
+  }
+  
+  .input {
+    @apply w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent;
+  }
+  
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+  
+  .badge-success {
+    @apply badge bg-success-100 text-success-800;
+  }
+  
+  .badge-danger {
+    @apply badge bg-danger-100 text-danger-800;
+  }
+  
+  .badge-neutral {
+    @apply badge bg-neutral-100 text-neutral-800;
+  }
+  
+  .change-positive {
+    @apply text-success-600;
+  }
+  
+  .change-negative {
+    @apply text-danger-600;
+  }
+  
+  .table-auto {
+    @apply w-full;
+  }
+  
+  .table-auto thead {
+    @apply bg-neutral-100 border-b border-neutral-200;
+  }
+  
+  .table-auto th {
+    @apply px-4 py-3 text-left text-sm font-semibold text-neutral-700;
+  }
+  
+  [dir="rtl"] .table-auto th {
+    @apply text-right;
+  }
+  
+  .table-auto td {
+    @apply px-4 py-3 text-sm border-b border-neutral-100;
+  }
+  
+  .table-auto tbody tr:hover {
+    @apply bg-neutral-50;
+  }
+  
+  .demo-badge {
+    @apply inline-flex items-center px-2 py-1 text-xs font-bold text-amber-800 bg-amber-100 border border-amber-300 rounded;
+  }
+  
+  .source-attribution {
+    @apply text-xs text-neutral-500 mt-2;
+  }
+  
+  .ai-confidence {
+    @apply text-xs text-neutral-600 italic;
+  }
+}
+
+@layer utilities {
+  .rtl-flip {
+    transform: scaleX(-1);
+  }
+  
+  [dir="rtl"] .rtl-flip {
+    transform: scaleX(1);
+  }
+  
+  .animate-shimmer {
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.4) 50%,
+      rgba(255, 255, 255, 0) 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+  }
+  
+  @keyframes shimmer {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
+  }
+}
+
+/* Chart styles */
+.recharts-wrapper {
+  @apply w-full;
+}
+
+.recharts-cartesian-grid-horizontal line,
+.recharts-cartesian-grid-vertical line {
+  @apply stroke-neutral-200;
+}
+
+/* Loading skeleton */
+.skeleton {
+  @apply animate-pulse bg-neutral-200 rounded;
+}
+
+/* Scrollbar customization */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-neutral-100;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-neutral-400 rounded;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-neutral-500;
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}
