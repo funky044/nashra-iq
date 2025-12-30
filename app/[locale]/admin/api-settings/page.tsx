@@ -68,24 +68,8 @@ export default function AdminAPIPage() {
   });
 
   useEffect(() => {
-    checkAuth();
     loadConfigs();
   }, []);
-
-  const checkAuth = () => {
-    const token = localStorage.getItem('auth_token');
-    const userData = localStorage.getItem('user');
-    
-    if (!token || !userData) {
-      router.push('/en/auth');
-      return;
-    }
-
-    const user = JSON.parse(userData);
-    if (user.role !== 'admin') {
-      router.push('/en');
-    }
-  };
 
   const loadConfigs = async () => {
     try {

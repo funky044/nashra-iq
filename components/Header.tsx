@@ -119,7 +119,7 @@ export default function Header({ locale, user }: HeaderProps) {
               </div>
             ) : (
               <Link
-                href={`/${locale}/login`}
+                href={`/${locale}/auth`}
                 className="btn-primary text-sm"
               >
                 {t('login', locale)}

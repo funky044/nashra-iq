@@ -21,24 +21,8 @@ export default function AdminCompaniesPage() {
   });
 
   useEffect(() => {
-    checkAuth();
     loadCompanies();
   }, []);
-
-  const checkAuth = () => {
-    const token = localStorage.getItem('auth_token');
-    const userData = localStorage.getItem('user');
-    
-    if (!token || !userData) {
-      router.push('/en/auth');
-      return;
-    }
-
-    const user = JSON.parse(userData);
-    if (user.role !== 'admin') {
-      router.push('/en');
-    }
-  };
 
   const loadCompanies = async () => {
     try {

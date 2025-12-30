@@ -249,17 +249,108 @@ export class AIDataService {
   }
 
   /**
+   * Generate earnings calendar events
+   */
+  async generateCalendarEvents(): Promise<void> {
+    const companies = await query('SELECT id, ticker, name_en FROM companies LIMIT 10');
+    
+    for (const company of companies.rows) {
+      // Generate quarterly earnings
+      const quarters = ['Q1', 'Q2', 'Q3', 'Q4'];
+      const currentYear = new Date().getFullYear();
+      
+      for (const quarter of quarters) {
+        const eventDate = this.getQuarterDate(quarter, currentYear);
+        
+        try {
+          await query(
+            `INSERT INTO calendar_events (company_id, event_type, title, event_date, description)
+             VALUES ($1, $2, $3, $4, $5)
+             ON CONFLICT (company_id, event_date, event_type) DO NOTHING`,
+            [
+              company.id,
+              'earnings',
+              `${company.name_en} ${quarter} ${currentYear} Earnings`,
+              eventDate,
+              `Quarterly earnings report for ${company.ticker}`
+            ]
+          );
+        } catch (error) {
+          console.error(`Failed to create calendar event for ${company.ticker}:`, error);
+        }
+      }
+    }
+  }
+
+  /**
+   * Generate screening criteria and results
+   */
+  async generateScreenerData(): Promise<void> {
+    try {
+      // Create table if not exists
+      await query(`
+        CREATE TABLE IF NOT EXISTS screener_presets (
+          id SERIAL PRIMARY KEY,
+          name VARCHAR(255) NOT NULL,
+          description TEXT,
+          criteria JSONB NOT NULL,
+          created_at TIMESTAMP DEFAULT NOW()
+        )
+      `);
+
+      // Add popular screening presets
+      const presets = [
+        {
+          name: 'High Growth Stocks',
+          description: 'Companies with strong revenue and earnings growth',
+          criteria: { minGrowth: 20, minMarketCap: 1000000000 }
+        },
+        {
+          name: 'Value Stocks',
+          description: 'Undervalued companies with strong fundamentals',
+          criteria: { maxPE: 15, minDividend: 3 }
+        },
+        {
+          name: 'Dividend Aristocrats',
+          description: 'Consistent dividend payers',
+          criteria: { minDividend: 4, minYears: 10 }
+        },
+        {
+          name: 'Momentum Plays',
+          description: 'Stocks with strong recent performance',
+          criteria: { min3MonthReturn: 15, minVolume: 1000000 }
+        }
+      ];
+
+      for (const preset of presets) {
+        await query(
+          `INSERT INTO screener_presets (name, description, criteria)
+           VALUES ($1, $2, $3)
+           ON CONFLICT DO NOTHING`,
+          [preset.name, preset.description, JSON.stringify(preset.criteria)]
+        );
+      }
+    } catch (error) {
+      console.error('Failed to generate screener data:', error);
+    }
+  }
+
+  /**
    * Main refresh function - Called by cron
    */
   async refreshAllData(): Promise<{
     success: boolean;
     stocksUpdated: number;
     newsAdded: number;
+    calendarEvents: number;
+    screenerPresets: number;
     errors: string[];
   }> {
     const errors: string[] = [];
     let stocksUpdated = 0;
     let newsAdded = 0;
+    let calendarEvents = 0;
+    let screenerPresets = 0;
     
     try {
       // Update stock prices
@@ -294,13 +385,49 @@ export class AIDataService {
     } catch (error: any) {
       errors.push(`Index update failed: ${error.message}`);
     }
+
+    try {
+      // Generate calendar events
+      console.log('Generating calendar events...');
+      await this.generateCalendarEvents();
+      const calendarResult = await query('SELECT COUNT(*) FROM calendar_events');
+      calendarEvents = parseInt(calendarResult.rows[0].count);
+      console.log('Calendar events generated');
+      
+    } catch (error: any) {
+      errors.push(`Calendar generation failed: ${error.message}`);
+    }
+
+    try {
+      // Generate screener presets
+      console.log('Generating screener presets...');
+      await this.generateScreenerData();
+      const screenerResult = await query('SELECT COUNT(*) FROM screener_presets');
+      screenerPresets = parseInt(screenerResult.rows[0].count);
+      console.log('Screener presets generated');
+      
+    } catch (error: any) {
+      errors.push(`Screener generation failed: ${error.message}`);
+    }
     
     return {
       success: errors.length === 0,
       stocksUpdated,
       newsAdded,
+      calendarEvents,
+      screenerPresets,
       errors
     };
+  }
+
+  private getQuarterDate(quarter: string, year: number): Date {
+    const quarterDates: { [key: string]: Date } = {
+      'Q1': new Date(year, 3, 15), // April 15
+      'Q2': new Date(year, 6, 15), // July 15
+      'Q3': new Date(year, 9, 15), // October 15
+      'Q4': new Date(year + 1, 0, 15), // January 15 next year
+    };
+    return quarterDates[quarter];
   }
 
   // Mock data generators (replace with real APIs)
