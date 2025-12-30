@@ -19,12 +19,12 @@ async function getNews() {
   }
 }
 
-export default async function NewsPage() {
+export default async function NewsPage({ params }: { params: { locale: string } }) {
   const newsArticles = await getNews();
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      <Header locale={params.locale} />
       
       <main className="flex-1 container mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold mb-6">Latest News</h1>

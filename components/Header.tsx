@@ -7,7 +7,7 @@ import { Menu, X, Globe, User, LogOut, Bell, Search } from 'lucide-react';
 import { t } from '@/lib/utils';
 
 interface HeaderProps {
-  locale: string;
+  locale?: string;
   user?: {
     email: string;
     full_name: string;
@@ -15,11 +15,14 @@ interface HeaderProps {
   } | null;
 }
 
-export default function Header({ locale, user }: HeaderProps) {
+export default function Header({ locale: localeProps, user }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
+  
+  // Extract locale from pathname if not provided
+  const locale = localeProps || pathname.split('/')[1] || 'en';
 
   const navigation = [
     { name: t('home', locale), href: `/${locale}` },

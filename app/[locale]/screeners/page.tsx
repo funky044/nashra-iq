@@ -16,12 +16,12 @@ async function getScreenerPresets() {
   }
 }
 
-export default async function ScreenersPage() {
+export default async function ScreenersPage({ params }: { params: { locale: string } }) {
   const presets = await getScreenerPresets();
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header />
+      <Header locale={params.locale} />
       
       <main className="flex-1 container mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold mb-6">Stock Screeners</h1>
